@@ -174,6 +174,7 @@ while getopts "huciIPr:" opt; do
         ;;
         r)
             if [ ${OPTARG} != ${BkpRetention} ];then BkpRetention=${OPTARG} ;fi
+        ;;
         \?)
             echo "Option ${opt} not recognized"
             usage
