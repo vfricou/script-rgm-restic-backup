@@ -6,7 +6,7 @@
 
 # User definitions
 BkpTarget='/srv/rgm/backup/restic'
-BkpRetention='7'
+BkpRetention='7' # Correspond to restic snapshots.
 BkpBinary='/usr/local/bin/restic'
 TempWorkDir="/tmp/restic/"
 ResticRepositoryPassLenght='110'
