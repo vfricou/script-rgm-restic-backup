@@ -80,6 +80,20 @@ function perform_mysql_dump() {
     done
 }
 
+function perform_influxdb_dump() {
+    DumpDest="${TempWorkDir}/influxdbbackup"
+    mkdir ${DumpDest}
+    Now="$(date +"%a")"
+    Bases="$(influx -precision rfc3339 -execute 'show databases' | grep -ve '^name$' -ve 'name: databases' -ve '----')"
+    for db in ${Bases}
+    do
+        Folder=${DumpDest}/${db}.${Now}
+        influxd backup -database ${db} ${Folder}
+        tar czf ${Folder}.tar.gz ${Folder}
+        rm -rf ${Folder}
+    done
+}
+
 function upload_mysql_dump() {
     printf "Upload mariadb dumps into restic target\n"
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump"
@@ -89,6 +103,7 @@ function perform_backups() {
     cd ${TempWorkDir}
     perform_mysql_dump
     upload_mysql_dump
+    perform_influxdb_dump
 }
 
 function clean_old_repository_files() {
