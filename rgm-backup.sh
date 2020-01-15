@@ -18,6 +18,7 @@ function del_binary() {
 function setup_environment() {
     if [ ! -d ${TempWorkDir} ]; then mkdir -p ${TempWorkDir} ;fi
     if [ ! -d '/usr/local/bin' ]; then mkdir -p '/usr/local/bin' ;fi
+    if [ ! -d ${BkpDirectory} ]; then mkdir -p ${BkpDirectory} ;fi
 }
 
 function provide_backup_binary() {
