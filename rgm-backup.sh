@@ -141,6 +141,7 @@ while getopts "uciIP" opt; do
         P)
             printf "${CF_BRED}Perform backup repository old snapshots cleaning${NC}\n"
             OPT_Purge=true
+        ;;
         \?)
             echo "Option ${opt} not recognized"
             usage
