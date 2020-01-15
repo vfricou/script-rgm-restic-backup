@@ -44,12 +44,6 @@ function provide_backup_binary() {
     chmod u+x ${BkpBinary}
 }
 
-function install_restic() {
-    cd ${TempWorkDir}
-    provide_backup_binary
-    clean_env
-}
-
 function generate_repo_password() {
     < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-${ResticRepositoryPassLenght}};echo;
 }
@@ -114,15 +108,6 @@ function upload_fs_backup() {
     done 
 }
 
-
-function perform_backups() {
-    cd ${TempWorkDir}
-    perform_mysql_dump
-    upload_mysql_dump
-    perform_influxdb_dump
-    upload_influx_backup
-}
-
 function clean_old_repository_files() {
     printf "Perform repository deletion of snapshots older than ${BkpRetention}\n"
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} forget --keep-last ${BkpRetention} --prune
@@ -173,15 +158,21 @@ elif [ ${OPT_Clean} ];then
     clean_env
 elif [ ${OPT_Install} ];then
     setup_environment
-    install_restic
+    cd ${TempWorkDir}
+    provide_backup_binary
+    clean_env
 elif [ ${OPT_Init} ];then
     init_restic_repository
 elif [ ${OPT_Purge} ];then
     clean_old_repository_files
 else
     setup_environment
-    perform_backups
-    #clean_env
+    cd ${TempWorkDir}
+    perform_mysql_dump
+    upload_mysql_dump
+    perform_influxdb_dump
+    upload_influx_backup
+    clean_env
     clean_old_repository_files
 fi
 # vim: expandtab sw=4 ts=4:
