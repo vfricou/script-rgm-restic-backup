@@ -1,0 +1,7 @@
+# Ignore vim backup files
+*\~
+.*\~
+
+# Ignore IDE history and configuration folders
+.idea
+.history
