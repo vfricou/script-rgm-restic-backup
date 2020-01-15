@@ -26,6 +26,13 @@ function provide_backup_binary() {
     chmod u+x ${BkpBinary}
 }
 
+function install_restic () {
+    setup_environment
+    cd ${TempWorkDir}
+    provide_backup_binary
+    clean_env
+}
+
 ## Main job
 # Defining colors scheme
 ## Foreground
