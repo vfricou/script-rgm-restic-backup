@@ -42,6 +42,25 @@ function install_restic() {
     clean_env
 }
 
+function generate_repo_password() {
+    < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-${ResticRepositoryPassLenght}};echo;
+}
+
+function init_restic_repository() {
+    if [ -d ${BkpDirectory}/index ]
+    then
+        printf "${CF_BRED}Restic repository already exist.\nRepository initialization aborted${NC} \n"
+        exit 1
+    else
+        ResticRepoPassword=$(generate_repo_password)
+        printf "Generated restic repository password.\n"
+        printf "${CF_BRED}Ensure to keep this password preciously !!! ${NC}\n"
+        printf "${ResticRepoPassword}\n\n"
+        export RESTIC_PASSWORD="${ResticRepoPassword}"
+        ${BkpBinary} init --repo ${BkpDirectory}
+    fi
+}
+
 ## Main job
 # Defining colors scheme
 ## Foreground
