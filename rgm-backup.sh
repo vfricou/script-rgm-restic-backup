@@ -51,7 +51,7 @@ CF_BYELLOW='\033[1;33m'
 ## Reset
 NC='\033[0m'
 
-while getopts "uci" opt; do
+while getopts "uciI" opt; do
     case ${opt} in
         u)
             printf "${CF_BRED}You've select to uninstall restic binary${NC}\n"
@@ -64,6 +64,10 @@ while getopts "uci" opt; do
         i)
             printf "${CF_BGREEN}You've select to install restic binary${NC}\n"
             OPT_Install=true
+        ;;
+        I)
+            printf "${CF_BGREEN}You'll init newer restic repository${NC}\n"
+            OPT_Init=true
         ;;
         \?)
             echo "Option ${opt} not recognized"
@@ -82,6 +86,9 @@ then
 elif [ ${OPT_Install} ]
 then
     install_restic
+elif [ ${OPT_Init} ]
+then
+    init_restic_repository
 else
     echo 'main'
 fi
