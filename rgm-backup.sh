@@ -108,7 +108,7 @@ function perform_backups() {
 
 function clean_old_repository_files() {
     printf "Perform repository deletion of snapshots older than ${BkpRetention}\n"
-    ${BkpBinary} --repo ${BkpTarget} forget --keep-last ${BkpRetention} --prune
+    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} forget --keep-last ${BkpRetention} --prune
 }
 
 ## Main job
