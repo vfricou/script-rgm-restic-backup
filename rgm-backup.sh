@@ -16,7 +16,10 @@ ResticPasswordFile='/root/.restic-repo'
 MariaDBClientConf='/root/.my-backup.cnf'
 PathToBackup='/etc
 /srv
-/var'
+/var
+/usr/local/bin/restic
+/root/.restic-repo
+/root/.my-backup.cnf'
 
 # Constants
 ResticVersion='0.9.6'
