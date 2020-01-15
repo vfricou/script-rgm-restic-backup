@@ -125,19 +125,15 @@ while getopts "uciI" opt; do
     esac
 done
 
-if [ ${OPT_Uninstall} ]
-then
+if [ ${OPT_Uninstall} ];then
     del_binary
     clean_env
-elif [ ${OPT_Clean} ]
-then
+elif [ ${OPT_Clean} ];then
     clean_env
-elif [ ${OPT_Install} ]
-then
+elif [ ${OPT_Install} ];then
     setup_environment
     install_restic
-elif [ ${OPT_Init} ]
-then
+elif [ ${OPT_Init} ];then
     init_restic_repository
 else
     setup_environment
