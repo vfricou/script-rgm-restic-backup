@@ -6,6 +6,7 @@ BkpRetention='7'
 BkpBinary='/usr/local/bin/restic'
 TempWorkDir="/tmp/restic/"
 ResticRepositoryPassLenght='110'
+ResticPasswordFile='/root/.restic-repo'
 
 # Constants
 ResticVersion='0.9.6'
@@ -56,8 +57,9 @@ function init_restic_repository() {
         printf "Generated restic repository password.\n"
         printf "${CF_BRED}Ensure to keep this password preciously !!! ${NC}\n"
         printf "${ResticRepoPassword}\n\n"
-        export RESTIC_PASSWORD="${ResticRepoPassword}"
-        ${BkpBinary} init --repo ${BkpDirectory}
+        printf "Storing password in restic password-file into ${ResticPasswordFile}.\n"
+        echo "${ResticRepoPassword}" > ${ResticPasswordFile}
+        ${BkpBinary} --repo ${BkpDirectory} -p ${ResticPasswordFile} init
     fi
 }
 
