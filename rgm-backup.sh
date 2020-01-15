@@ -125,7 +125,7 @@ function upload_influx_backup() {
 function upload_fs_backup() {
     for fold in ${PathToBackup}
     do
-         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude '/srv/rgm/backup/restic' backup ${fold} | tee -a ${JobLogFile}
+         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude ${BkpTarget} backup ${fold} | tee -a ${JobLogFile}
     done 
 }
 
