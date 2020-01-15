@@ -12,6 +12,9 @@ TempWorkDir="/tmp/restic/"
 ResticRepositoryPassLenght='110'
 ResticPasswordFile='/root/.restic-repo'
 MariaDBClientConf='/root/.my-backup.cnf'
+PathToBackup='/etc
+/srv
+/var'
 
 # Constants
 ResticVersion='0.9.6'
@@ -103,6 +106,14 @@ function upload_influx_backup() {
     printf "Upload influx dumps into restic target\n"
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/influxdbbackup"
 }
+
+function upload_fs_backup() {
+    for fold in ${PathToBackup}
+    do
+         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup ${fold}
+    done 
+}
+
 
 function perform_backups() {
     cd ${TempWorkDir}
