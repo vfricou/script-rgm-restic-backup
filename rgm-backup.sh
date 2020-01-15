@@ -5,7 +5,7 @@
 # Vincent FRICOU <vincent@fricouv.eu> 2020
 
 # User definitions
-BkpDirectory='/srv/rgm/backup/restic'
+BkpTarget='/srv/rgm/backup/restic'
 BkpRetention='7'
 BkpBinary='/usr/local/bin/restic'
 TempWorkDir="/tmp/restic/"
@@ -28,7 +28,7 @@ function del_binary() {
 function setup_environment() {
     if [ ! -d ${TempWorkDir} ]; then mkdir -p ${TempWorkDir} ;fi
     if [ ! -d '/usr/local/bin' ]; then mkdir -p '/usr/local/bin' ;fi
-    if [ ! -d ${BkpDirectory} ]; then mkdir -p ${BkpDirectory} ;fi
+    if [ ! -d ${BkpTarget} ]; then mkdir -p ${BkpTarget} ;fi
 }
 
 function provide_backup_binary() {
@@ -52,7 +52,7 @@ function generate_repo_password() {
 }
 
 function init_restic_repository() {
-    if [ -d ${BkpDirectory}/index ]
+    if [ -d ${BkpTarget}/index ]
     then
         printf "${CF_BRED}Restic repository already exist.\nRepository initialization aborted${NC} \n"
         exit 1
@@ -63,7 +63,7 @@ function init_restic_repository() {
         printf "${ResticRepoPassword}\n\n"
         printf "Storing password in restic password-file into ${ResticPasswordFile}.\n"
         echo "${ResticRepoPassword}" > ${ResticPasswordFile}
-        ${BkpBinary} --repo ${BkpDirectory} -p ${ResticPasswordFile} init
+        ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} init
     fi
 }
 
@@ -82,7 +82,7 @@ function perform_mysql_dump() {
 
 function upload_mysql_dump() {
     printf "Upload mariadb dumps into restic target\n"
-    ${BkpBinary} --repo ${BkpDirectory} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump"
+    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump"
 }
 
 function perform_backups() {
