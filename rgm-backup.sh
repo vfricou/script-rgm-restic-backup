@@ -1,11 +1,15 @@
 #!/bin/bash -e
 
+# User definitions
 BkpDirectory='/srv/rgm/backup/restic'
 BkpRetention='7'
 BkpBinary='/usr/local/bin/restic'
+TempWorkDir="/tmp/restic/"
+ResticRepositoryPassLenght='110'
+
+# Constants
 ResticVersion='0.9.6'
 ResticDlURL="https://github.com/restic/restic/releases/download/v${ResticVersion}/restic_${ResticVersion}_linux_amd64.bz2"
-TempWorkDir="/tmp/restic/"
 
 function clean_env() {
     if [ -d ${TempWorkDir} ]; then printf "Cleaning installation environment ${TempWorkDir}\n";rm -rf ${TempWorkDir} ;fi
