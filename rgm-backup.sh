@@ -76,7 +76,7 @@ function perform_mysql_dump() {
     for db in $Bases
     do
         File=${DumpDest}/${db}.${Now}.sql.gz
-        mysqldump --compact --order-by-primary --add-drop-table --defaults-extra-file=${MariaDBClientConf} ${db} -R | gzip -9 > ${File}
+        mysqldump --defaults-extra-file=${MariaDBClientConf} --compact --order-by-primary --add-drop-table ${db} -R | gzip -9 > ${File}
     done
 }
 
