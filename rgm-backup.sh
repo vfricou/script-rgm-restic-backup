@@ -32,7 +32,7 @@ Options :
     -c : Perform cleaning of temporary directory used to install restic or perform backups
     -I : Initialize new restic repository with password generation.
     -P : Perform repository purge of old snapshots according to retention policy
-    -r : Retention policy. Correspond to restic snapshots to keep.
+    -r : Retention policy. Correspond to restic snapshots to keep (for each path).
 "
     exit 128
 }
