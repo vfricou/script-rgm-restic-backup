@@ -126,19 +126,27 @@ while getopts "uciIP" opt; do
     case ${opt} in
         u)
             printf "${CF_BRED}You've select to uninstall restic binary${NC}\n"
-            OPT_Uninstall=true
+            del_binary
+            clean_env
+            exit 0
         ;;
         c)
             printf "${CF_BYELLOW}You've select to clean installation environment${NC}\n"
-            OPT_Clean=true
+            clean_env
+            exit 0
         ;;
         i)
             printf "${CF_BGREEN}You've select to install restic binary${NC}\n"
-            OPT_Install=true
+            setup_environment
+            cd ${TempWorkDir}
+            provide_backup_binary
+            clean_env
+            exit 0
         ;;
         I)
             printf "${CF_BGREEN}You'll init newer restic repository${NC}\n"
-            OPT_Init=true
+            init_restic_repository
+            exit 0
         ;;
         P)
             printf "${CF_BRED}Perform backup repository old snapshots cleaning${NC}\n"
