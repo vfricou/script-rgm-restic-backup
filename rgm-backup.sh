@@ -1,4 +1,8 @@
 #!/bin/bash -e
+#
+# RGM platform backup script using restic solution
+#
+# Vincent FRICOU <vincent@fricouv.eu> 2020
 
 # User definitions
 BkpDirectory='/srv/rgm/backup/restic'
