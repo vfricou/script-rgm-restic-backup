@@ -24,6 +24,7 @@ PathToBackup='/etc
 # Constants
 ResticVersion='0.9.6'
 ResticDlURL="https://github.com/restic/restic/releases/download/v${ResticVersion}/restic_${ResticVersion}_linux_amd64.bz2"
+JobLogFile="/srv/rgm/backup/restic-backup_$(date +"%a").log"
 
 function usage() {
     printf "
@@ -93,7 +94,7 @@ function perform_mysql_dump() {
     for db in $Bases
     do
         File=${DumpDest}/${db}.${Now}.sql.gz
-        mysqldump --defaults-extra-file=${MariaDBClientConf} --compact --order-by-primary --add-drop-table ${db} -R | gzip -9 > ${File}
+        mysqldump --defaults-extra-file=${MariaDBClientConf} --compact --order-by-primary --add-drop-table ${db} -R 2 >> ${JobLogFile} | gzip -9 > ${File}
     done
 }
 
@@ -105,7 +106,7 @@ function perform_influxdb_dump() {
     for db in ${Bases}
     do
         Folder=${DumpDest}/${db}.${Now}
-        influxd backup -database ${db} ${Folder}
+        influxd backup -database ${db} ${Folder} | tee -a ${JobLogFile}
         tar czf ${Folder}.tar.gz ${Folder}
         rm -rf ${Folder}
     done
@@ -113,24 +114,24 @@ function perform_influxdb_dump() {
 
 function upload_mysql_dump() {
     printf "Upload mariadb dumps into restic target\n"
-    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump"
+    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump" | tee -a ${JobLogFile}
 }
 
 function upload_influx_backup() {
     printf "Upload influx dumps into restic target\n"
-    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/influxdbbackup"
+    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/influxdbbackup" | tee -a ${JobLogFile}
 }
 
 function upload_fs_backup() {
     for fold in ${PathToBackup}
     do
-         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude '/srv/rgm/backup/restic' backup ${fold}
+         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude '/srv/rgm/backup/restic' backup ${fold} | tee -a ${JobLogFile}
     done 
 }
 
 function clean_old_repository_files() {
-    printf "Perform repository deletion of snapshots older than ${BkpRetention}\n"
-    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} forget --keep-daily ${BkpRetention} --prune
+    printf "Perform repository deletion of snapshots older than ${BkpRetention}\n" | tee -a ${JobLogFile}
+    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} forget --keep-daily ${BkpRetention} --prune | tee -a ${JobLogFile}
 }
 
 ## Main job
@@ -148,18 +149,18 @@ while getopts "huciIPr:" opt; do
             usage
         ;;
         u)
-            printf "${CF_BRED}You've select to uninstall restic binary${NC}\n"
+            printf "${CF_BRED}You've select to uninstall restic binary${NC}\n" | tee -a ${JobLogFile}
             del_binary
             clean_env
             exit 0
         ;;
         c)
-            printf "${CF_BYELLOW}You've select to clean installation environment${NC}\n"
+            printf "${CF_BYELLOW}You've select to clean installation environment${NC}\n" | tee -a ${JobLogFile}
             clean_env
             exit 0
         ;;
         i)
-            printf "${CF_BGREEN}You've select to install restic binary${NC}\n"
+            printf "${CF_BGREEN}You've select to install restic binary${NC}\n" | tee -a ${JobLogFile}
             setup_environment
             cd ${TempWorkDir}
             provide_backup_binary
@@ -167,12 +168,12 @@ while getopts "huciIPr:" opt; do
             exit 0
         ;;
         I)
-            printf "${CF_BGREEN}You'll init newer restic repository${NC}\n"
+            printf "${CF_BGREEN}You'll init newer restic repository${NC}\n" | tee -a ${JobLogFile}
             init_restic_repository
             exit 0
         ;;
         P)
-            printf "${CF_BRED}Perform backup repository old snapshots cleaning${NC}\n"
+            printf "${CF_BRED}Perform backup repository old snapshots cleaning${NC}\n" | tee -a ${JobLogFile}
             opt_purge=true
         ;;
         r)
