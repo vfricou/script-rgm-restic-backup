@@ -80,9 +80,15 @@ function perform_mysql_dump() {
     done
 }
 
+function upload_mysql_dump() {
+    printf "Upload mariadb dumps into restic target\n"
+    ${BkpBinary} --repo ${BkpDirectory} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump"
+}
+
 function perform_backups() {
     cd ${TempWorkDir}
     perform_mysql_dump
+    upload_mysql_dump
 }
 
 ## Main job
