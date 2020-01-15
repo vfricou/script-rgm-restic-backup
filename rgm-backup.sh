@@ -143,6 +143,8 @@ CF_BYELLOW='\033[1;33m'
 ## Reset
 NC='\033[0m'
 
+rm ${JobLogFile}
+
 while getopts "huciIPr:" opt; do
     case ${opt} in
         h)
