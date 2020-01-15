@@ -11,6 +11,11 @@ function clean_env() {
     if [ -d ${TempWorkDir} ]; then printf "Cleaning installation environment ${TempWorkDir}\n";rm -rf ${TempWorkDir} ;fi
 }
 
+function setup_environment() {
+    if [ ! -d ${TempWorkDir} ]; then mkdir -p ${TempWorkDir} ;fi
+    if [ ! -d '/usr/local/bin' ]; then mkdir -p '/usr/local/bin' ;fi
+}
+
 ## Main job
 # Defining colors scheme
 ## Foreground
