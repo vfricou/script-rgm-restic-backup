@@ -11,6 +11,7 @@ BkpBinary='/usr/local/bin/restic'
 TempWorkDir="/tmp/restic/"
 ResticRepositoryPassLenght='110'
 ResticPasswordFile='/root/.restic-repo'
+MariaDBClientConf='/root/.my-backup.cnf'
 
 # Constants
 ResticVersion='0.9.6'
@@ -64,6 +65,24 @@ function init_restic_repository() {
         echo "${ResticRepoPassword}" > ${ResticPasswordFile}
         ${BkpBinary} --repo ${BkpDirectory} -p ${ResticPasswordFile} init
     fi
+}
+
+function perform_mysql_dump() {
+    DumpDest="${TempWorkDir}/mariadbdump"
+    mkdir ${LOC}
+    Now="$(date +"%a")"
+    Bases="$(mysql --defaults-extra-file=${MariaDBClientConf} -Bse 'show databases')"
+
+    for db in $BASES
+    do
+        File=${DumpDest}/${db}.${Now}.sql.gz
+        mysqldump --compact --order-by-primary --add-drop-table --defaults-extra-file=${MariaDBClientConf} ${db} -R | gzip -9 > ${File}
+    done
+}
+
+function perform_backups() {
+    cd ${TempWorkDir}
+    perform_mysql_dump
 }
 
 ## Main job
