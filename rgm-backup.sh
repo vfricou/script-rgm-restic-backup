@@ -150,8 +150,10 @@ while getopts "uciIP" opt; do
         ;;
         P)
             printf "${CF_BRED}Perform backup repository old snapshots cleaning${NC}\n"
-            OPT_Purge=true
+            opt_purge=true
         ;;
+        r)
+            if [ ${OPTARG} != ${BkpRetention} ];then BkpRetention=${OPTARG} ;fi
         \?)
             echo "Option ${opt} not recognized"
             usage
@@ -159,20 +161,9 @@ while getopts "uciIP" opt; do
     esac
 done
 
-if [ ${OPT_Uninstall} ];then
-    del_binary
-    clean_env
-elif [ ${OPT_Clean} ];then
-    clean_env
-elif [ ${OPT_Install} ];then
-    setup_environment
-    cd ${TempWorkDir}
-    provide_backup_binary
-    clean_env
-elif [ ${OPT_Init} ];then
-    init_restic_repository
-elif [ ${OPT_Purge} ];then
+if [ ${opt_purge} ];then
     clean_old_repository_files
+    exit 0
 else
     setup_environment
     cd ${TempWorkDir}
