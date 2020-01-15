@@ -99,11 +99,17 @@ function upload_mysql_dump() {
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump"
 }
 
+function upload_influx_backup() {
+    printf "Upload influx dumps into restic target\n"
+    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/influxdbbackup"
+}
+
 function perform_backups() {
     cd ${TempWorkDir}
     perform_mysql_dump
     upload_mysql_dump
     perform_influxdb_dump
+    upload_influx_backup
 }
 
 function clean_old_repository_files() {
