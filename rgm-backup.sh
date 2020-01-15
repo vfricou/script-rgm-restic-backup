@@ -32,7 +32,7 @@ Options :
     -c : Perform cleaning of temporary directory used to install restic or perform backups
     -I : Initialize new restic repository with password generation.
     -P : Perform repository purge of old snapshots according to retention policy
-    -r : Retention policy. Correspond to restic snapshots to keep (for each path).
+    -r : Retention policy in days.
 "
     exit 128
 }
@@ -127,7 +127,7 @@ function upload_fs_backup() {
 
 function clean_old_repository_files() {
     printf "Perform repository deletion of snapshots older than ${BkpRetention}\n"
-    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} forget --keep-last ${BkpRetention} --prune
+    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} forget --keep-daily ${BkpRetention} --prune
 }
 
 ## Main job
