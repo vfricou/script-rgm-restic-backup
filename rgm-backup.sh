@@ -16,6 +16,16 @@ function setup_environment() {
     if [ ! -d '/usr/local/bin' ]; then mkdir -p '/usr/local/bin' ;fi
 }
 
+function provide_backup_binary() {
+    printf "Downloading restic package in version ${ResticVersion}\n"
+    wget -q --show-progress ${ResticDlURL}
+    bzip2 -d restic_${ResticVersion}_linux_amd64.bz2
+    printf "Installing restic binary in version ${ResticVersion}\n"
+    cp restic_${ResticVersion}_linux_amd64 ${BkpBinary}
+    chown root:root ${BkpBinary}
+    chmod u+x ${BkpBinary}
+}
+
 ## Main job
 # Defining colors scheme
 ## Foreground
