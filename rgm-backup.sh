@@ -1,5 +1,7 @@
 #!/bin/bash -e
 #
+Version=1.0
+Name=rgm-backup.sh
 # RGM platform backup script using restic solution
 #
 # Vincent FRICOU <vincent@fricouv.eu> 2020
@@ -19,6 +21,21 @@ PathToBackup='/etc
 # Constants
 ResticVersion='0.9.6'
 ResticDlURL="https://github.com/restic/restic/releases/download/v${ResticVersion}/restic_${ResticVersion}_linux_amd64.bz2"
+
+function usage() {
+    printf "
+Usage of script ${Name} (v${Version}) :
+Options :
+    -h : Display this help
+    -i : Perform restic binary installation on system
+    -u : Perform restic binary uninstallation on system
+    -c : Perform cleaning of temporary directory used to install restic or perform backups
+    -I : Initialize new restic repository with password generation.
+    -P : Perform repository purge of old snapshots according to retention policy
+    -r : Retention policy. Correspond to restic snapshots to keep.
+"
+    exit 128
+}
 
 function clean_env() {
     if [ -d ${TempWorkDir} ]; then printf "Cleaning installation environment ${TempWorkDir}\n";rm -rf ${TempWorkDir} ;fi
