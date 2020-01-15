@@ -69,7 +69,7 @@ function init_restic_repository() {
 
 function perform_mysql_dump() {
     DumpDest="${TempWorkDir}/mariadbdump"
-    mkdir ${LOC}
+    mkdir ${DumpDest}
     Now="$(date +"%a")"
     Bases="$(mysql --defaults-extra-file=${MariaDBClientConf} -Bse 'show databases')"
 
