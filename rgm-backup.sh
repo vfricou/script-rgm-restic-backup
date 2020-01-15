@@ -41,7 +41,6 @@ function provide_backup_binary() {
 }
 
 function install_restic() {
-    setup_environment
     cd ${TempWorkDir}
     provide_backup_binary
     clean_env
@@ -110,10 +109,13 @@ then
     clean_env
 elif [ ${OPT_Install} ]
 then
+    setup_environment
     install_restic
 elif [ ${OPT_Init} ]
 then
     init_restic_repository
 else
-    echo 'main'
+    setup_environment
+    perform_backups
+    #clean_env
 fi
