@@ -11,6 +11,10 @@ function clean_env() {
     if [ -d ${TempWorkDir} ]; then printf "Cleaning installation environment ${TempWorkDir}\n";rm -rf ${TempWorkDir} ;fi
 }
 
+function del_binary() {
+    if [ -f ${BkpBinary} ]; then printf "Removing restic binary from system (${BkpBinary})\n";rm ${BkpBinary} ;fi
+}
+
 function setup_environment() {
     if [ ! -d ${TempWorkDir} ]; then mkdir -p ${TempWorkDir} ;fi
     if [ ! -d '/usr/local/bin' ]; then mkdir -p '/usr/local/bin' ;fi
