@@ -33,7 +33,7 @@ function setup_environment() {
 
 function provide_backup_binary() {
     printf "Downloading restic package in version ${ResticVersion}\n"
-    wget -q --show-progress ${ResticDlURL}
+    wget -q ${ResticDlURL}
     bzip2 -d restic_${ResticVersion}_linux_amd64.bz2
     printf "Installing restic binary in version ${ResticVersion}\n"
     cp restic_${ResticVersion}_linux_amd64 ${BkpBinary}
