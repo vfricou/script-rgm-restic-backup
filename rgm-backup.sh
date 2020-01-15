@@ -122,8 +122,11 @@ CF_BYELLOW='\033[1;33m'
 ## Reset
 NC='\033[0m'
 
-while getopts "uciIPr:" opt; do
+while getopts "huciIPr:" opt; do
     case ${opt} in
+        h)
+            usage
+        ;;
         u)
             printf "${CF_BRED}You've select to uninstall restic binary${NC}\n"
             del_binary
