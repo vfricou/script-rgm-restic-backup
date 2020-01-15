@@ -91,6 +91,11 @@ function perform_backups() {
     upload_mysql_dump
 }
 
+function clean_old_repository_files() {
+    printf "Perform repository deletion of snapshots older than ${BkpRetention}\n"
+    ${BkpBinary} --repo ${BkpTarget} forget --keep-last ${BkpRetention} --prune
+}
+
 ## Main job
 # Defining colors scheme
 ## Foreground
@@ -100,7 +105,7 @@ CF_BYELLOW='\033[1;33m'
 ## Reset
 NC='\033[0m'
 
-while getopts "uciI" opt; do
+while getopts "uciIP" opt; do
     case ${opt} in
         u)
             printf "${CF_BRED}You've select to uninstall restic binary${NC}\n"
@@ -118,6 +123,9 @@ while getopts "uciI" opt; do
             printf "${CF_BGREEN}You'll init newer restic repository${NC}\n"
             OPT_Init=true
         ;;
+        P)
+            printf "${CF_BRED}Perform backup repository old snapshots cleaning${NC}\n"
+            OPT_Purge=true
         \?)
             echo "Option ${opt} not recognized"
             usage
@@ -135,8 +143,11 @@ elif [ ${OPT_Install} ];then
     install_restic
 elif [ ${OPT_Init} ];then
     init_restic_repository
+elif [ ${OPT_Purge} ];then
+    clean_old_repository_files
 else
     setup_environment
     perform_backups
     #clean_env
+    clean_old_repository_files
 fi
