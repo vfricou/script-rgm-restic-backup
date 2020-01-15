@@ -191,6 +191,7 @@ else
     upload_mysql_dump
     perform_influxdb_dump
     upload_influx_backup
+    upload_fs_backup
     clean_env
     clean_old_repository_files
 fi
