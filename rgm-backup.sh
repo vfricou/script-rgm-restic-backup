@@ -125,7 +125,7 @@ function upload_influx_backup() {
 function upload_fs_backup() {
     for fold in ${PathToBackup}
     do
-         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude ${BkpTarget} backup ${fold} | tee -a ${JobLogFile}
+         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude ${BkpTarget} --exclude /var/lib/elasticsearch --exclude /var/lib/mysql --exclude /var/lib/influxdb backup ${fold} | tee -a ${JobLogFile}
     done 
 }
 
