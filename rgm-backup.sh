@@ -126,7 +126,7 @@ function perform_influxdb_dump() {
 
 function upload_mysql_dump() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Upload mariadb dumps into restic target start\n" | tee -a ${JobLogFile}
+    printf "# Upload mariadb dumps into restic target start" | tee -a ${JobLogFile}
 
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump" | tee -a ${JobLogFile}
     printf "####################################\n" | tee -a ${JobLogFile}
@@ -135,7 +135,7 @@ function upload_mysql_dump() {
 
 function upload_influx_backup() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Upload influx dumps into restic target start\n" | tee -a ${JobLogFile}
+    printf "# Upload influx dumps into restic target start" | tee -a ${JobLogFile}
 
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/influxdbbackup" | tee -a ${JobLogFile}
     printf "####################################\n" | tee -a ${JobLogFile}
@@ -144,11 +144,11 @@ function upload_influx_backup() {
 
 function upload_fs_backup() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Start fs folder backup\n" | tee -a ${JobLogFile}
+    printf "# Start fs folder backup" | tee -a ${JobLogFile}
 
     for fold in ${PathToBackup}
     do
-        printf "Backup folder ${fold}\n" | tee -a ${JobLogFile}
+        printf "\nBackup folder ${fold}" | tee -a ${JobLogFile}
         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude ${BkpTarget} --exclude /var/lib/elasticsearch --exclude /var/lib/mysql --exclude /var/lib/influxdb backup ${fold} | tee -a ${JobLogFile}
     done 
     printf "####################################\n" | tee -a ${JobLogFile}
