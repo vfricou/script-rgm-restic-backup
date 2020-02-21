@@ -87,7 +87,7 @@ function init_restic_repository() {
 
 function perform_mysql_dump() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Starting mysql dumps\n\n" | tee -a ${JobLogFile}
+    printf "# Starting mysql dumps\n" | tee -a ${JobLogFile}
     
     DumpDest="${TempWorkDir}/mariadbdump"
     mkdir ${DumpDest}
@@ -106,7 +106,7 @@ function perform_mysql_dump() {
 
 function perform_influxdb_dump() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Starting influxdb dumps\n\n" | tee -a ${JobLogFile}
+    printf "# Starting influxdb dumps\n" | tee -a ${JobLogFile}
 
     DumpDest="${TempWorkDir}/influxdbbackup"
     mkdir ${DumpDest}
@@ -126,7 +126,7 @@ function perform_influxdb_dump() {
 
 function upload_mysql_dump() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Upload mariadb dumps into restic target start\n\n" | tee -a ${JobLogFile}
+    printf "# Upload mariadb dumps into restic target start\n" | tee -a ${JobLogFile}
 
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump" | tee -a ${JobLogFile}
     printf "####################################\n" | tee -a ${JobLogFile}
@@ -135,7 +135,7 @@ function upload_mysql_dump() {
 
 function upload_influx_backup() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Upload influx dumps into restic target start\n\n" | tee -a ${JobLogFile}
+    printf "# Upload influx dumps into restic target start\n" | tee -a ${JobLogFile}
 
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/influxdbbackup" | tee -a ${JobLogFile}
     printf "####################################\n" | tee -a ${JobLogFile}
@@ -144,7 +144,7 @@ function upload_influx_backup() {
 
 function upload_fs_backup() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Start fs folder backup\n\n" | tee -a ${JobLogFile}
+    printf "# Start fs folder backup\n" | tee -a ${JobLogFile}
 
     for fold in ${PathToBackup}
     do
@@ -157,7 +157,7 @@ function upload_fs_backup() {
 
 function clean_old_repository_files() {
     printf "####################################\n" | tee -a ${JobLogFile}
-    printf "# Start backup retention cleaning (with retention ${BkpRtention}) \n\n" | tee -a ${JobLogFile}
+    printf "# Start backup retention cleaning (with retention ${BkpRtention}) \n" | tee -a ${JobLogFile}
 
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} forget --keep-daily ${BkpRetention} --prune | tee -a ${JobLogFile}
     printf "####################################\n" | tee -a ${JobLogFile}
