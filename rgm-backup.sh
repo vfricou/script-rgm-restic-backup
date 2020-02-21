@@ -117,7 +117,7 @@ function perform_influxdb_dump() {
     do
         Folder=${DumpDest}/${db}.${Now}
         printf "Dumping database ${db}\n" | tee -a ${JobLogFile}
-        influxd backup -database ${db} ${Folder} | tee -a ${JobLogFile}
+        influxd backup -database ${db} ${Folder} 1> ${JobLogFile} 2>/dev/null
         tar czf ${Folder}.tar.gz ${Folder}
         rm -rf ${Folder}
     done
