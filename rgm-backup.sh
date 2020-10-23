@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-Version=1.0
+Version=1.0.1
 Name=rgm-backup.sh
 # RGM platform backup script using restic solution
 #
@@ -116,7 +116,7 @@ function perform_influxdb_dump() {
     do
         Folder=${DumpDest}/${db}.${Now}
         printf "Dumping database ${db}\n" | tee -a ${JobLogFile}
-        influxd backup -database ${db} ${Folder} 1> ${JobLogFile} 2>/dev/null
+        influxd backup -database ${db} ${Folder} 1>> ${JobLogFile} 2>/dev/null
         tar czf ${Folder}.tar.gz ${Folder}
         rm -rf ${Folder}
     done
@@ -225,7 +225,7 @@ if [ ${opt_purge} ];then
 else
     printf "######################################################\n" | tee ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
-    printf "# Startup RGM backup procedure\n" – tee -a ${JobLogFile}
+    printf "# Startup RGM backup procedure\n" | tee -a ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
     printf "######################################################\n\n" | tee -a ${JobLogFile}
     setup_environment
@@ -237,9 +237,9 @@ else
     upload_fs_backup
     clean_env
     clean_old_repository_files
-    printf "######################################################\n" | tee ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
-    printf "# End of RGM backup procedure\n" – tee -a ${JobLogFile}
+    printf "######################################################\n" | tee -a ${JobLogFile}
+    printf "# End of RGM backup procedure\n" | tee -a ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
 fi
