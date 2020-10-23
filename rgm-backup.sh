@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-Version=1.0.1
+Version=1.1.0
 Name=rgm-backup.sh
 # RGM platform backup script using restic solution
 #
@@ -14,12 +14,7 @@ TempWorkDir="/tmp/restic/"
 ResticRepositoryPassLenght='110'
 ResticPasswordFile='/root/.restic-repo'
 MariaDBClientConf='/root/.my-backup.cnf'
-PathToBackup='/etc
-/srv
-/var
-/usr/local/bin/restic
-/root/.restic-repo
-/root/.my-backup.cnf'
+PathToBackup='/etc /srv /var /usr/local/bin/restic /root/.restic-repo /root/.my-backup.cnf'
 
 # Constants
 ResticVersion='0.9.6'
@@ -146,19 +141,18 @@ function upload_fs_backup() {
     printf "####################################\n" | tee -a ${JobLogFile}
     printf "# Start fs folder backup" | tee -a ${JobLogFile}
 
-    for fold in ${PathToBackup}
-    do
-        printf "\nBackup folder ${fold}" | tee -a ${JobLogFile}
-        ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} \
-                      --exclude ${BkpTarget} \
-                      --exclude /var/lib/elasticsearch \
-                      --exclude /var/lib/mysql \
-                      --exclude /var/lib/influxdb \
-                      --exclude /srv/rgm/nagios*/var/log/spool \
-                      --exclude /srv/rgm/thruk*/var/sessions \
-                      --exclude /srv/rgm/backup \
-                      backup ${fold} | tee -a ${JobLogFile}
-    done 
+    printf "\nBackup folder ${PathToBackup}" | tee -a ${JobLogFile}
+    ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} \
+                  --exclude ${BkpTarget} \
+                  --exclude /var/lib/elasticsearch \
+                  --exclude /var/lib/mysql \
+                  --exclude /var/lib/influxdb \
+                  --exclude "/srv/rgm/nagios*/var/log/spool" \
+                  --exclude "/srv/rgm/thruk*/var/sessions" \
+                  --exclude "/srv/rgm/nagios*/etc/lilac-backup*" \
+                  --exclude /srv/rgm/backup \
+                  backup ${PathToBackup} | tee -a ${JobLogFile}
+
     printf "####################################\n" | tee -a ${JobLogFile}
     printf "# End fs folder backup\n\n" | tee -a ${JobLogFile} 
 }
