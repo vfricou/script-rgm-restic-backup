@@ -32,6 +32,7 @@ Options :
     -I : Initialize new restic repository with password generation.
     -P : Perform repository purge of old snapshots according to retention policy
     -r : Retention policy in days.
+    -t : Temporary work folder (Default : /tmp/restic
 "
     exit 128
 }
@@ -177,6 +178,14 @@ CF_BYELLOW='\033[1;33m'
 NC='\033[0m'
 
 rm ${JobLogFile}
+
+while getopts "t:" opt; do
+    case ${opt} in
+      t)
+           TempWorkDir=${OPTARG}
+      ;;
+    esac
+done
 
 while getopts "huciIPr:" opt; do
     case ${opt} in
