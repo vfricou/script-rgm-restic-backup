@@ -43,7 +43,34 @@ This script as some arguments could used to performs specific actions.
 | -P   | Launch a purge into repository to delete snapshots (Use with caution) |
 | -r   | Override configured retention policy                                  |
 
-## Licence
+## Restic command summary
+
+### Display repository statitics
+
+```bash
+restic -r /srv/rgm/backup/restic -p /root/.restic-repo stats
+```
+
+### Display repository snapshots
+
+```bash
+restic -r /srv/rgm/backup/restic -p /root/.restic-repo snapshots
+```
+
+### Display files contained in snapshots
+
+```bash
+restic -r /srv/rgm/backup/restic -p /root/.restic-repo ls <snapshotID>
+```
+
+### Mount snapshot as drive to navigate in snapshot list
+
+```bash
+restic -r /srv/rgm/backup/restic -p /root/.restic-repo mount /mnt <snapshotID>
+cd /mnt/snapshots/latest
+```
+
+## Licence
 
 BSD
 
