@@ -24,7 +24,7 @@ By default, the script is configured to use specfic paths in system and all is d
 | ResticRepositoryPassLenght | `110`                                                                          | Restic repository default password length           |
 | ResticPasswordFile         | `/root/.restic-repo`                                                           | Restic password file used to perform backup         |
 | MariaDBClientConf          | `/root/.my-backup.cnf`                                                         | MariaDB Client config file used to perform backup   |
-| PathToBackup               | `/etc /srv /var /usr/local/bin/restic /root/.restic-repo /root/.my-backup.cnf` | Path in filesystem backuped by default              |
+| PathToBackup               | `/etc /srv /var /usr/local/bin/restic /root/.restic-repo /root/.my-backup.cnf` | Path in filesystem backuped by default. Note, filesystem default path `/var/lib/mysql`, `/var/lib/influxdb` and `/var/lib/elasticsearch` as excluded              |
 | ResticVersion              | `0.9.6`                                                                        | Restic version to use                               |
 | ResticDlURL                | `<Restic artifact on https://github.com/restic/restic>`                        | Restic download URL                                 |
 | JobLogFile                 | `/srv/rgm/backup/restic-backup_$(date +"%a").log`                              | Path for backup log file                            |

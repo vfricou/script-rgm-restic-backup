@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-Version=1.0
+Version=1.0.1
 Name=rgm-backup.sh
 # RGM platform backup script using restic solution
 #
@@ -86,6 +86,9 @@ function init_restic_repository() {
 }
 
 function perform_mysql_dump() {
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# Starting mysql dumps\n" | tee -a ${JobLogFile}
+    
     DumpDest="${TempWorkDir}/mariadbdump"
     mkdir ${DumpDest}
     Now="$(date +"%a")"
@@ -94,11 +97,17 @@ function perform_mysql_dump() {
     for db in $Bases
     do
         File=${DumpDest}/${db}.${Now}.sql.gz
+        printf "Dumping database ${db}\n" | tee -a ${JobLogFile}
         mysqldump --defaults-extra-file=${MariaDBClientConf} --compact --order-by-primary --add-drop-table ${db} -R 2>> ${JobLogFile} | gzip -9 > ${File}
     done
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# End mysql dumps\n\n" | tee -a ${JobLogFile}
 }
 
 function perform_influxdb_dump() {
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# Starting influxdb dumps\n" | tee -a ${JobLogFile}
+
     DumpDest="${TempWorkDir}/influxdbbackup"
     mkdir ${DumpDest}
     Now="$(date +"%a")"
@@ -106,32 +115,54 @@ function perform_influxdb_dump() {
     for db in ${Bases}
     do
         Folder=${DumpDest}/${db}.${Now}
-        influxd backup -database ${db} ${Folder} | tee -a ${JobLogFile}
+        printf "Dumping database ${db}\n" | tee -a ${JobLogFile}
+        influxd backup -database ${db} ${Folder} 1>> ${JobLogFile} 2>/dev/null
         tar czf ${Folder}.tar.gz ${Folder}
         rm -rf ${Folder}
     done
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# End influxdb dumps\n\n" | tee -a ${JobLogFile}
 }
 
 function upload_mysql_dump() {
-    printf "Upload mariadb dumps into restic target\n"
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# Upload mariadb dumps into restic target start" | tee -a ${JobLogFile}
+
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/mariadbdump" | tee -a ${JobLogFile}
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# Upload mariadb dumps into restic target finished\n\n" | tee -a ${JobLogFile}
 }
 
 function upload_influx_backup() {
-    printf "Upload influx dumps into restic target\n"
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# Upload influx dumps into restic target start" | tee -a ${JobLogFile}
+
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} backup "${TempWorkDir}/influxdbbackup" | tee -a ${JobLogFile}
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# Upload mariadb dumps into restic target end\n\n" | tee -a ${JobLogFile}
 }
 
 function upload_fs_backup() {
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# Start fs folder backup" | tee -a ${JobLogFile}
+
     for fold in ${PathToBackup}
     do
-         ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude ${BkpTarget} backup ${fold} | tee -a ${JobLogFile}
+        printf "\nBackup folder ${fold}" | tee -a ${JobLogFile}
+        ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude ${BkpTarget} --exclude /var/lib/elasticsearch --exclude /var/lib/mysql --exclude /var/lib/influxdb backup ${fold} | tee -a ${JobLogFile}
     done 
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# End fs folder backup\n\n" | tee -a ${JobLogFile} 
 }
 
 function clean_old_repository_files() {
-    printf "Perform repository deletion of snapshots older than ${BkpRetention}\n" | tee -a ${JobLogFile}
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# Start backup retention cleaning (with retention ${BkpRtention}) \n" | tee -a ${JobLogFile}
+
     ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} forget --keep-daily ${BkpRetention} --prune | tee -a ${JobLogFile}
+    printf "####################################\n" | tee -a ${JobLogFile}
+    printf "# End backup retention cleaning\n\n" | tee -a ${JobLogFile}
+
 }
 
 ## Main job
@@ -192,6 +223,11 @@ if [ ${opt_purge} ];then
     clean_old_repository_files
     exit 0
 else
+    printf "######################################################\n" | tee ${JobLogFile}
+    printf "######################################################\n" | tee -a ${JobLogFile}
+    printf "# Startup RGM backup procedure\n" | tee -a ${JobLogFile}
+    printf "######################################################\n" | tee -a ${JobLogFile}
+    printf "######################################################\n\n" | tee -a ${JobLogFile}
     setup_environment
     cd ${TempWorkDir}
     perform_mysql_dump
@@ -201,5 +237,10 @@ else
     upload_fs_backup
     clean_env
     clean_old_repository_files
+    printf "######################################################\n" | tee -a ${JobLogFile}
+    printf "######################################################\n" | tee -a ${JobLogFile}
+    printf "# End of RGM backup procedure\n" | tee -a ${JobLogFile}
+    printf "######################################################\n" | tee -a ${JobLogFile}
+    printf "######################################################\n" | tee -a ${JobLogFile}
 fi
 # vim: expandtab sw=4 ts=4:
