@@ -234,6 +234,7 @@ else
     printf "######################################################\n" | tee ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
     printf "# Startup RGM backup procedure\n" | tee -a ${JobLogFile}
+    printf "# Launch datetime : $(date +"%d %b %Y - %H:%M:%S")\n" | tee -a ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
     printf "######################################################\n\n" | tee -a ${JobLogFile}
     setup_environment
@@ -248,6 +249,7 @@ else
     printf "######################################################\n" | tee -a ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
     printf "# End of RGM backup procedure\n" | tee -a ${JobLogFile}
+    printf "# End datetime : $(date +"%d %b %Y - %H:%M:%S")\n" | tee -a ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
     printf "######################################################\n" | tee -a ${JobLogFile}
 fi
