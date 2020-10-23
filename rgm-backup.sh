@@ -149,7 +149,15 @@ function upload_fs_backup() {
     for fold in ${PathToBackup}
     do
         printf "\nBackup folder ${fold}" | tee -a ${JobLogFile}
-        ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} --exclude ${BkpTarget} --exclude /var/lib/elasticsearch --exclude /var/lib/mysql --exclude /var/lib/influxdb backup ${fold} | tee -a ${JobLogFile}
+        ${BkpBinary} --repo ${BkpTarget} -p ${ResticPasswordFile} \
+                      --exclude ${BkpTarget} \
+                      --exclude /var/lib/elasticsearch \
+                      --exclude /var/lib/mysql \
+                      --exclude /var/lib/influxdb \
+                      --exclude /srv/rgm/nagios*/var/log/spool \
+                      --exclude /srv/rgm/thruk*/var/sessions \
+                      --exclude /srv/rgm/backup \
+                      backup ${fold} | tee -a ${JobLogFile}
     done 
     printf "####################################\n" | tee -a ${JobLogFile}
     printf "# End fs folder backup\n\n" | tee -a ${JobLogFile} 
